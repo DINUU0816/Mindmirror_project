@@ -23,7 +23,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     if (token) {
       try {
-        const decoded: any = jwtDecode(token);
+        const decoded: any = jwtDecode(token as string);
         if (decoded.exp * 1000 < Date.now()) {
           logout();
         } else {
@@ -54,8 +54,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (credentials: any) => {
     const response = await axios.post(`${API_URL}auth/login/`, credentials);
     const { access } = response.data;
-    setToken(access);
     localStorage.setItem('token', access);
+    setToken(access);
+    await fetchProfile(access);
   };
 
   const register = async (data: any) => {
