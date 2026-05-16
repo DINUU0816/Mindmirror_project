@@ -30,6 +30,57 @@ class EmotionRecord(models.Model):
     class Meta:
         ordering = ['-timestamp']
 
+class EmotionHistory(models.Model):
+    BURNOUT_LEVELS = [('Low', 'Low'), ('Moderate', 'Moderate'), ('High', 'High')]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='emotion_history')
+    detected_emotion = models.CharField(max_length=20, choices=EmotionRecord.EMOTION_CHOICES)
+    confidence = models.FloatField(default=0.0)
+    sentiment_score = models.FloatField(default=0.0)
+    stress_level = models.IntegerField(default=0)
+    burnout_risk = models.CharField(max_length=20, choices=BURNOUT_LEVELS, default='Low')
+    emotional_stability_score = models.FloatField(default=100.0)
+    timestamp = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ['-timestamp']
+
+class WellnessInsight(models.Model):
+    RISK_LEVELS = [('Low', 'Low'), ('Moderate', 'Moderate'), ('High', 'High')]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='wellness_insights')
+    title = models.CharField(max_length=200)
+    recommendation = models.TextField()
+    risk_level = models.CharField(max_length=20, choices=RISK_LEVELS, default='Low')
+    score = models.FloatField(default=0.0)
+    is_crisis = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.title}"
+
+class EmotionalProfile(models.Model):
+    RECOVERY_CHOICES = [
+        ('Quick', 'Quick'),
+        ('Moderate', 'Moderate'),
+        ('Slow', 'Slow'),
+    ]
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='emotional_profile')
+    dominant_emotion = models.CharField(max_length=20, choices=EmotionRecord.EMOTION_CHOICES, blank=True)
+    emotional_stability_score = models.FloatField(default=100.0)
+    burnout_risk = models.CharField(max_length=20, choices=WellnessInsight.RISK_LEVELS, default='Low')
+    recovery_speed = models.CharField(max_length=20, choices=RECOVERY_CHOICES, default='Moderate')
+    stress_pattern = models.CharField(max_length=100, default='Balanced')
+    peak_positive_period = models.CharField(max_length=100, default='Unknown')
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.username} Emotional Profile"
+
 class JournalEntry(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='journals')
     title = models.CharField(max_length=200)

@@ -8,6 +8,11 @@ https://docs.djangoproject.com/en/5.2/howto/deployment/asgi/
 """
 
 import os
+import sys
+
+ROOT_DIR = os.path.dirname(os.path.dirname(__file__))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
 
 from django.core.asgi import get_asgi_application
 
