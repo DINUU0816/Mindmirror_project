@@ -34,24 +34,56 @@ Mind Mirror+ is a sophisticated full-stack web application that uses real-time f
 
 ### 2. Backend Setup
 ```bash
-cd backend
-python -m venv venv
-# Windows: venv\Scripts\activate
-# Mac/Linux: source venv/bin/activate
+cd ..
+.venv\Scripts\activate
+cd mindmirror_project\backend
 pip install -r ../requirements.txt
 python manage.py migrate
 python manage.py seed_data
-python manage.py runserver
+python manage.py runserver 8000
 ```
 
 ### 3. Frontend Setup
 ```bash
-cd frontend
+cd ..\mindmirror_project\frontend
 npm install
-npm run dev
+npm run dev -- --host 127.0.0.1
 ```
 
-### 4. AI Model
+### 4. Run both servers
+Open two terminals from the repository root (one level above this README) and run the following commands:
+
+Terminal 1 (backend):
+```bash
+cd mindmirror_project\backend
+..\..\.venv\Scripts\activate
+python manage.py runserver 8000
+```
+
+Terminal 2 (frontend):
+```bash
+cd mindmirror_project\frontend
+npm run dev -- --host 127.0.0.1
+```
+
+### 5. Train a better AI Model
+If you want more accurate facial expression recognition, train the model with a labeled emotion dataset.
+
+1. Prepare your dataset as:
+   - `ml_models/data/train/<emotion_name>/...`
+   - `ml_models/data/test/<emotion_name>/...`
+
+2. Run training from the repository root:
+```bash
+cd mindmirror_project
+.venv\Scripts\python.exe ml_models\train_emotion_model.py --train-dir ml_models\data\train --test-dir ml_models\data\test --save-path ml_models\emotion_model.h5 --epochs 80 --batch-size 32
+```
+
+3. After training, the best model is saved to `ml_models/emotion_model.h5`.
+
+The system will then use this improved model for live emotion detection.
+
+### 5. AI Model
 The system uses a pre-trained emotion detection model. For the hackathon demo, a robust fallback/mock system is included if `ml_models/emotion_model.h5` is not present, ensuring a seamless experience.
 
 ---
