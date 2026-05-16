@@ -50,3 +50,15 @@ htmlcov/
 # Misc
 .idea/
 .cache/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+db.sqlite3
+
+# Node
+node_modules/
+
+# Environment
+.env
